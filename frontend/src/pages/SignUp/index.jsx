@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signUp } from "./api";
 
 export function SignUp() {
@@ -8,10 +8,20 @@ export function SignUp() {
   const [passwordR, setPasswordR] = useState();
   const [apiProgress, setApiProgress] = useState(false);
   const [successMessage, setSuccessMessage] = useState();
+  const [errors, setErrors] = useState({});
+  const [generalErrors, setGeneralErrors] = useState();
+
+  useEffect(() => {
+    setErrors({});
+  }, [username]);
+  useEffect(() => {
+    setErrors({});
+  }, [email]);
 
   const onSubmit = async (event) => {
     event.preventDefault();
     setSuccessMessage();
+    setGeneralErrors();
     setApiProgress(true);
 
     try {
@@ -21,8 +31,15 @@ export function SignUp() {
         password,
       });
       setSuccessMessage(response.data.message);
-    } catch {
-      console.log();
+    } catch (axiosError) {
+      if (
+        axiosError.response?.data &&
+        axiosError.response.data.status === 400
+      ) {
+        setErrors(axiosError.response.data.validationErrors);
+      } else {
+        setGeneralErrors("Unexpected error occured. Please try again!");
+      }
     } finally {
       setApiProgress(false);
     }
@@ -41,22 +58,30 @@ export function SignUp() {
                 User Name:{" "}
               </label>
               <input
-                className="form-control"
+                className={
+                  errors.username ? "form-control is-invalid" : "form-control"
+                }
                 id="username"
                 type="text"
-                onChange={(event) => setUsername(event.target.value)}
+                onChange={(event) => {
+                  setUsername(event.target.value);
+                }}
               />
+              <div className="invalid-feedback">{errors.username}</div>
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="email">
                 E-mail:{" "}
               </label>
               <input
-                className="form-control"
+                className={
+                  errors.email ? "form-control is-invalid" : "form-control"
+                }
                 id="email"
                 type="text"
                 onChange={(event) => setEmail(event.target.value)}
               />
+              <div className="invalid-feedback">{errors.email}</div>
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="password">
@@ -83,6 +108,9 @@ export function SignUp() {
 
             {successMessage && (
               <div className="alert alert-success">{successMessage}</div>
+            )}
+            {generalErrors && (
+              <div className="alert alert-danger">{generalErrors}</div>
             )}
 
             <div className="text-center">
