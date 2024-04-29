@@ -1,19 +1,31 @@
 import { useState } from "react";
-import axios from "axios";
+import { signUp } from "./api";
 
 export function SignUp() {
   const [username, setUsername] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [passwordR, setPasswordR] = useState();
+  const [apiProgress, setApiProgress] = useState(false);
+  const [successMessage, setSuccessMessage] = useState();
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
-    axios.post("/api/v1/users", {
-      username,
-      email,
-      password,
-    });
+    setSuccessMessage();
+    setApiProgress(true);
+
+    try {
+      const response = await signUp({
+        username,
+        email,
+        password,
+      });
+      setSuccessMessage(response.data.message);
+    } catch {
+      console.log();
+    } finally {
+      setApiProgress(false);
+    }
   };
 
   return (
@@ -68,11 +80,22 @@ export function SignUp() {
                 onChange={(event) => setPasswordR(event.target.value)}
               />
             </div>
+
+            {successMessage && (
+              <div className="alert alert-success">{successMessage}</div>
+            )}
+
             <div className="text-center">
               <button
                 className="btn btn-primary"
-                disabled={password != passwordR || !password}
+                disabled={apiProgress || password != passwordR || !password}
               >
+                {apiProgress && (
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    aria-hidden="true"
+                  ></span>
+                )}
                 Sign Up
               </button>
             </div>
