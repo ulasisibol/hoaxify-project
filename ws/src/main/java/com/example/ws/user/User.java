@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity // db'ye User sınıfından bir table göndermek için
 @Table(name = "users") // table adı User olarak kabul edilmediği için eklendi
@@ -11,8 +12,13 @@ public class User {
     @Id
     @GeneratedValue
     long id; // table için unique bir id gerektiği için eklendi
+
+    @NotBlank
     String username;
+
+    @NotBlank
     String email;
+
     String password;
 
     public long getId() {
