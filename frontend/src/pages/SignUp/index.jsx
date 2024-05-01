@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { signUp } from "./api";
 import { Input } from "./Components/Input";
 
@@ -11,6 +11,13 @@ export function SignUp() {
   const [successMessage, setSuccessMessage] = useState();
   const [errors, setErrors] = useState({});
   const [generalErrors, setGeneralErrors] = useState();
+
+  const passwordRepeatEr = useMemo(() => {
+    //İf'i sürekli döngüye almamak için sadace bağımlı olan değişkenler değiştiğinde if'i sorgulamasını sağladık.
+    if (password != passwordR) {
+      return "Passwords' missmatch!";
+    }
+  }, [password, passwordR]);
 
   useEffect(() => {
     setErrors(function (lastError) {
@@ -28,6 +35,15 @@ export function SignUp() {
       };
     });
   }, [email]);
+
+  useEffect(() => {
+    setErrors(function (lastError) {
+      return {
+        ...lastError,
+        password: undefined,
+      };
+    });
+  }, [password]);
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -66,6 +82,7 @@ export function SignUp() {
           <div className="card-body">
             <Input
               id="username"
+              type="text"
               label="Username: "
               error={errors.username}
               onChange={(event) => {
@@ -75,34 +92,44 @@ export function SignUp() {
             <Input
               id="email"
               label="E-mail: "
+              type="text"
               error={errors.email}
               onChange={(event) => {
                 setEmail(event.target.value);
               }}
             />
-
-            <div className="mb-3">
-              <label className="form-label" htmlFor="password">
-                Password:{" "}
-              </label>
-              <input
-                className="form-control"
-                id="password"
-                type="password"
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </div>
-            <div className="mb-3">
+            <Input
+              id="password"
+              label="Password: "
+              type="password"
+              error={errors.password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+              }}
+            />
+            <Input
+              id="passwordR"
+              label="Password Repeat: "
+              type="password"
+              error={passwordRepeatEr}
+              onChange={(event) => {
+                setPasswordR(event.target.value);
+              }}
+            />
+            {/* <div className="mb-3">
               <label className="form-label" htmlFor="passwordR">
                 Repeat Password:{" "}
               </label>
               <input
-                className="form-control"
+                className={
+                  isItSame ? "form-control is-invalid" : "form-control"
+                }
                 id="passwordR"
                 type="password"
                 onChange={(event) => setPasswordR(event.target.value)}
               />
-            </div>
+              <div className="invalid-feedback">Password missmatch!</div>
+            </div> */}
 
             {successMessage && (
               <div className="alert alert-success">{successMessage}</div>

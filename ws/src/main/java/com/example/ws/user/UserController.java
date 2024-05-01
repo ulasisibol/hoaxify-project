@@ -1,8 +1,6 @@
 package com.example.ws.user;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +36,23 @@ public class UserController {
         apiError.setPath("/api/v1/users");
         apiError.setMessage("Validation Error!");
         apiError.setStatus(400);
-
-        // Map<String, String> validationErrors = new HashMap<>();
-
-        // for (var fieldError : exception.getBindingResult().getFieldErrors()) {
-        // validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
-        // }
-
-        // Üstteki yorum satırıyla aynı işlevi görüyor.
         var validationErrors = exception.getBindingResult().getFieldErrors().stream()
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage,
+                        (existing, replacing) -> existing));
 
+        apiError.setValidationErrors(validationErrors);
+        return ResponseEntity.badRequest().body(apiError);
+    }
+
+    @ExceptionHandler(NotUniqueEmailException.class)
+    ResponseEntity<ApiError> handleNotUniqueEmailEx(NotUniqueEmailException exception) {
+        ApiError apiError = new ApiError();
+        apiError.setPath("/api/v1/users");
+        apiError.setMessage("Validation Error!");
+        apiError.setStatus(400);
+
+        java.util.Map<String, String> validationErrors = new HashMap<>();
+        validationErrors.put("email", "E-mail in use!");
         apiError.setValidationErrors(validationErrors);
         return ResponseEntity.badRequest().body(apiError);
     }
