@@ -21,16 +21,16 @@ public class User {
     long id; // table için unique bir id gerektiği için eklendi
 
     @NotBlank(message = "{hoaxify.constraints.notblank.message}")
-    @Size(min = 6, max = 12)
+    @Size(min = 6, max = 12, message = "{hoaxify.constraints.username.size}")
     String username;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "{hoaxify.constraints.notblank.email.message}")
+    @Email(message = "{hoaxify.constraints.email.notLikeEmail}")
     @UniqueEmail
     String email;
 
-    @Size(min = 6, max = 255)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
+    @Size(min = 6, max = 255, message = "{hoaxify.constraints.password.size}")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "{hoaxify.constraints.password.pattern}")
     String password;
 
     public long getId() {
