@@ -20,7 +20,7 @@ public class User {
     @GeneratedValue
     long id; // table için unique bir id gerektiği için eklendi
 
-    @NotBlank
+    @NotBlank(message = "{hoaxify.constraints.notblank.message}")
     @Size(min = 6, max = 12)
     String username;
 
