@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { signUp } from "./api";
 import { Input } from "./Components/Input";
+import { useTranslation } from "react-i18next";
 
 export function SignUp() {
   const [username, setUsername] = useState();
@@ -11,11 +12,12 @@ export function SignUp() {
   const [successMessage, setSuccessMessage] = useState();
   const [errors, setErrors] = useState({});
   const [generalErrors, setGeneralErrors] = useState();
+  const { t } = useTranslation();
 
   const passwordRepeatEr = useMemo(() => {
     //İf'i sürekli döngüye almamak için sadace bağımlı olan değişkenler değiştiğinde if'i sorgulamasını sağladık.
     if (password != passwordR) {
-      return "Passwords' missmatch!";
+      return t("passwordMissM");
     }
   }, [password, passwordR]);
 
@@ -65,7 +67,7 @@ export function SignUp() {
       ) {
         setErrors(axiosError.response.data.validationErrors);
       } else {
-        setGeneralErrors("Unexpected error occured. Please try again!");
+        setGeneralErrors(t("genericError"));
       }
     } finally {
       setApiProgress(false);
@@ -77,13 +79,13 @@ export function SignUp() {
       <div className="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2">
         <form className="card" onSubmit={onSubmit}>
           <div className="text-center card-header">
-            <h1>Sign Up</h1>
+            <h1>{t("signUp")}</h1>
           </div>
           <div className="card-body">
             <Input
               id="username"
               type="text"
-              label="Username: "
+              label={t("username")}
               error={errors.username}
               onChange={(event) => {
                 setUsername(event.target.value);
@@ -91,7 +93,7 @@ export function SignUp() {
             />
             <Input
               id="email"
-              label="E-mail: "
+              label={t("email")}
               type="text"
               error={errors.email}
               onChange={(event) => {
@@ -100,7 +102,7 @@ export function SignUp() {
             />
             <Input
               id="password"
-              label="Password: "
+              label={t("password")}
               type="password"
               error={errors.password}
               onChange={(event) => {
@@ -109,28 +111,13 @@ export function SignUp() {
             />
             <Input
               id="passwordR"
-              label="Password Repeat: "
+              label={t("passwordR")}
               type="password"
               error={passwordRepeatEr}
               onChange={(event) => {
                 setPasswordR(event.target.value);
               }}
             />
-            {/* <div className="mb-3">
-              <label className="form-label" htmlFor="passwordR">
-                Repeat Password:{" "}
-              </label>
-              <input
-                className={
-                  isItSame ? "form-control is-invalid" : "form-control"
-                }
-                id="passwordR"
-                type="password"
-                onChange={(event) => setPasswordR(event.target.value)}
-              />
-              <div className="invalid-feedback">Password missmatch!</div>
-            </div> */}
-
             {successMessage && (
               <div className="alert alert-success">{successMessage}</div>
             )}
@@ -149,7 +136,7 @@ export function SignUp() {
                     aria-hidden="true"
                   ></span>
                 )}
-                Sign Up
+                {t("signUp")}
               </button>
             </div>
           </div>

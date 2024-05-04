@@ -1,0 +1,9 @@
+{
+  "signUp": "Üye Ol",
+  "username": "Kullanıcı Adı: ",
+  "email": "E-posta Adresi: ",
+  "password": "Şifre: ",
+  "passwordR": "Şifre Tekrarı: ",
+  "passwordMissM": "Şifreler uyuşmuyor! ",
+  "genericError": "Bilinmeyen bir hata oluştu. Lütfen tekrar deneyin!"
+}
